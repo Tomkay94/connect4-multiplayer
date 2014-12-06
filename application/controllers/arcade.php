@@ -1,40 +1,44 @@
 <?php
 
 class Arcade extends CI_Controller {
-     
-    function __construct() {
-    		// Call the Controller constructor
-	    	parent::__construct();
-	    	session_start();
-    }
-        
-    public function _remap($method, $params = array()) {
-	    	// enforce access control to protected functions	
-    		
-    		if (!isset($_SESSION['user']))
-   			redirect('account/loginForm', 'refresh'); //Then we redirect to the index page again
- 	    	
-	    	return call_user_func_array(array($this, $method), $params);
-    }
-       
-    
-    function index() {
-		    	$data['user']=$_SESSION['user'];
-		    	if (isset($_SESSION['errmsg'])) {
-		    		$data['errmsg']=	$_SESSION['errmsg'];
-		    		unset($_SESSION['errmsg']);
-		    	}
-		    	$this->load->view('arcade/mainPage',$data);
+
+  function __construct() {
+    // Call the Controller constructor
+    parent::__construct();
+    session_start();
+  }
+
+  public function _remap($method, $params = array()) {
+    // enforce access control to protected functions
+    $protected = array('index', 'getAvailableUsers', 'getInvitation', 'acceptInvitation',
+                       'declineInvitation', 'checkInvitation', 'invite');
+
+    if (in_array($method, $protected) && !isset($_SESSION['user'])) {
+      $this->session->set_flashdata('info', 'Welcome to connect 4, please register/login first!');
+      redirect('account/loginForm', 'refresh'); //Then we redirect to the index page again
     }
 
-    function getAvailableUsers() {
- 	   	$this->load->model('user_model');
-    		$users = $this->user_model->getAvailableUsers();
-    		$data['users']=$users;
-    		$data['currentUser']=$_SESSION['user'];
-    		$this->load->view('arcade/availableUsers',$data);
-    }
-    
+    return call_user_func_array(array($this, $method), $params);
+  }
+
+  function index() {
+    $data = array(
+      'title' => 'Connect 4 Lobby',
+      'main' => 'arcade/mainPage',
+      'user' => $_SESSION['user']
+    );
+    $this->load->view('template', $data);
+  }
+
+  function getAvailableUsers() {
+    $this->load->model('user_model');
+    $data = array(
+      'availableUsers' => $this->user_model->getAvailableUsers(),
+      'currentUser' => $_SESSION['user']
+    );
+    $this->load->view('arcade/availableUsers', $data);
+  }
+
     function getInvitation() {
 	    	$user = $_SESSION['user'];
 	    		
@@ -229,17 +233,16 @@ class Arcade extends CI_Controller {
 		
 		
 		return;
-		
-		// something went wrong
-	transactionerror:
-	nouser2:	
-		$this->db->trans_rollback();
-	
-    	loginerror:
-    	
-    		$_SESSION["errmsg"] = "Sorry, this user is no longer available.";
-    	 
-    		redirect('arcade/index', 'refresh'); //redirect to the main application page
+
+    // something went wrong
+    transactionerror:
+    nouser2:
+      $this->db->trans_rollback();
+
+    loginerror:
+      $this->session->set_flashdata('error', 'Sorry, this user is no longer available.');
+      redirect('arcade/index', 'refresh'); //redirect to the main application page
+
     		}
     		catch(Exception $e) {
     			$this->db->trans_rollback();

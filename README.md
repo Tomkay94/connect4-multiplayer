@@ -19,9 +19,10 @@ sudo service apache2 restart
 
 For server setup:
 
-- Be sure to open all the required ports for MySQL and SMTP
-- The the EC2 ip address may be blocked from sending email, if this is
-  the case, please retry on another server with different ip address.
+- For Securimage Captcha, please make sure php is compiled with the gd library.
+- Be sure to allow outgoing SMTP send requests.
+- The EC2 ip address may be blocked from sending email, if this is the case,
+  please retry on another server with different ip address.
 
 For application logic, the following assumptions were made:
 

@@ -1,60 +1,62 @@
 <?php
 
 class Board extends CI_Controller {
-     
-    function __construct() {
-    		// Call the Controller constructor
-	    	parent::__construct();
-	    	session_start();
-    } 
-          
-    public function _remap($method, $params = array()) {
-	    	// enforce access control to protected functions	
-    		
-    		if (!isset($_SESSION['user']))
-   			redirect('account/loginForm', 'refresh'); //Then we redirect to the index page again
- 	    	
-	    	return call_user_func_array(array($this, $method), $params);
-    }
-    
-    
-    function index() {
-		$user = $_SESSION['user'];
-    		    	
-	    	$this->load->model('user_model');
-	    	$this->load->model('invite_model');
-	    	$this->load->model('match_model');
-	    	
-	    	$user = $this->user_model->get($user->login);
 
-	    	$invite = $this->invite_model->get($user->invite_id);
-	    	
-	    	if ($user->user_status_id == User::WAITING) {
-	    		$invite = $this->invite_model->get($user->invite_id);
-	    		$otherUser = $this->user_model->getFromId($invite->user2_id);
-	    	}
-	    	else if ($user->user_status_id == User::PLAYING) {
-	    		$match = $this->match_model->get($user->match_id);
-	    		if ($match->user1_id == $user->id)
-	    			$otherUser = $this->user_model->getFromId($match->user2_id);
-	    		else
-	    			$otherUser = $this->user_model->getFromId($match->user1_id);
-	    	}
-	    	
-	    	$data['user']=$user;
-	    	$data['otherUser']=$otherUser;
-	    	
-	    	switch($user->user_status_id) {
-	    		case User::PLAYING:	
-	    			$data['status'] = 'playing';
-	    			break;
-	    		case User::WAITING:
-	    			$data['status'] = 'waiting';
-	    			break;
-	    	}
-	    	
-		$this->load->view('match/board',$data);
+  function __construct() {
+    // Call the Controller constructor
+    parent::__construct();
+    session_start();
+  }
+
+  public function _remap($method, $params = array()) {
+    // enforce access control to protected functions
+    $protected = array('index', 'postMsg', 'getMsg');
+
+    if (in_array($method,$protected) && !isset($_SESSION['user'])) {
+      $this->session->set_flashdata('warning', 'You need to sign in first!');
+      redirect('account/loginForm', 'refresh'); //Then we redirect to the index page again
     }
+
+    return call_user_func_array(array($this, $method), $params);
+  }
+
+  function index() {
+    $user = $_SESSION['user'];
+
+    $this->load->model('user_model');
+    $this->load->model('invite_model');
+    $this->load->model('match_model');
+
+    $user = $this->user_model->get($user->login);
+
+    $invite = $this->invite_model->get($user->invite_id);
+
+    if ($user->user_status_id == User::WAITING) {
+      $invite = $this->invite_model->get($user->invite_id);
+      $otherUser = $this->user_model->getFromId($invite->user2_id);
+    }
+    else if ($user->user_status_id == User::PLAYING) {
+      $match = $this->match_model->get($user->match_id);
+      if ($match->user1_id == $user->id)
+        $otherUser = $this->user_model->getFromId($match->user2_id);
+      else
+        $otherUser = $this->user_model->getFromId($match->user1_id);
+    }
+
+    $data['user']=$user;
+    $data['otherUser']=$otherUser;
+
+    switch($user->user_status_id) {
+      case User::PLAYING:	
+        $data['status'] = 'playing';
+        break;
+      case User::WAITING:
+        $data['status'] = 'waiting';
+        break;
+    }
+
+    $this->load->view('match/board',$data);
+  }
 
  	function postMsg() {
  		$this->load->library('form_validation');
