@@ -92,6 +92,13 @@
       // highlight the clicked location
       $('#'+e.target.id).css("background-color", processing);
 
+      // // Check if its their turn
+      // $.get("<?= base_url() ?>board/get_player_turn", function (data, text, jqXHR) {
+      //   if (data && data == false) {
+      //     alert("It's not your turn!");
+      //   }
+      // }
+
       // put move
       var col_num = e.target.id.split('-')[0];
       $.post("<?= base_url() ?>board/update", {'col': col_num}, function (data,text,jqXHR){

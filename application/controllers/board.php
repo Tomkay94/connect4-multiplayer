@@ -163,6 +163,11 @@ class Board extends CI_Controller {
       goto error;
     }
 
+    // Check whose turn it is
+    if(!get_player_turn()) {
+      goto notYourTurn;
+    }
+
     $user = $_SESSION['user'];
     $this->load->model('match_model');
     $this->load->model('user_model');
@@ -226,6 +231,9 @@ class Board extends CI_Controller {
     echo json_encode(array('status'=>'success', 'board'=>$matrix));
     return;
 
+    notYourTurn:
+      echo json_encode(array('message'=>"function() {alert('It\'s not your turn!')}"));
+
     transactionerror:
       $this->db->trans_rollback();
 
@@ -274,8 +282,8 @@ class Board extends CI_Controller {
     $player1 = $this->match_model->user1_id;
     $player2 = $this->match_model->user2_id;
     $matrix = unserialize($match->board_state);
-    
     $num_player_chips = 0;
+
     // Even # of chips, player 1's turn
     // Odd # of chips, player 2's turn
     for ($row = 0; $row < self::NUM_ROWS; $row++) {
@@ -287,7 +295,8 @@ class Board extends CI_Controller {
     }
 
     // Return the player's ID, it's that person's turn. 
-    return $player_turn_id= ($num_player_chips % 2 == 0) ? $player1 : $player2;
+    $player_turn_id= ($num_player_chips % 2 == 0) ? $player1 : $player2;
+    return ($player_turn_id == $user->id);
   }
 
   /* Checks for a horizontal sequence of a player's chips */
