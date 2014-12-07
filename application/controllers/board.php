@@ -149,12 +149,12 @@ class Board extends CI_Controller {
   /* Checks for a horizontal sequence of a player's chips */
   function check_horizontal($matrix, $player) {
     for ($row = 0; $row < $NUM_ROWS; $row++) {
-      for ($column = 0; $column < $NUM_COLUMNS; $column++) {      
+      for ($col = 0; $col < $NUM_COLUMNS; $col++) {      
         if (
-          $matrix[$row][$column] == $player &&
-          $matrix[$row][$column + 1] == $player &&
-          $matrix[$row][$column + 2] == $player &&
-          $matrix[$row][$column + 3] == $player) {
+          $matrix[$row][$col] == $player &&
+          $matrix[$row][$col + 1] == $player &&
+          $matrix[$row][$col + 2] == $player &&
+          $matrix[$row][$col + 3] == $player) {
             return true;
         }
       } // End foreach row as column
@@ -166,12 +166,12 @@ class Board extends CI_Controller {
   function check_vertical($matrix, $player) {
     foreach($matrix as $row) {
       $win_count = 0;
-      foreach($row as $column) {
+      foreach($row as $col) {
         if (
-          $matrix[$row][$column] == $player &&
-          $matrix[$row + 1][$column] == $player &&
-          $matrix[$row + 2][$column] == $player &&
-          $matrix[$row + 3][$column] == $player) {
+          $matrix[$row][$col] == $player &&
+          $matrix[$row + 1][$col] == $player &&
+          $matrix[$row + 2][$col] == $player &&
+          $matrix[$row + 3][$col] == $player) {
             return true;
         }
       } // End foreach row as column
@@ -181,24 +181,25 @@ class Board extends CI_Controller {
 
   /* Checks for a lower or upper diagonal sequence of a player's chips   */
   function check_diagonal($matrix, $player) {
+    // check for a diagonal from the lower left to an upper right
     for ($row = 0; $row < $NUM_ROWS - 3; $row++) { 
-      for ($col=0; $col < $NUM_COLUMNS - 3; $col++) { 
+      for ($col = 0; $col < $NUM_COLUMNS - 3; $col++) { 
         if ( 
           $matrix[$row][$col] == $player && 
-          $matrix[$row][$col] == $matrix[$row+1][$col+1] && 
-          $matrix[$row][$col] == $matrix[$row+2][$col+2] &&
-          $matrix[$row][$col] == $matrix[$row+3][$col+3]) {
+          $matrix[$row][$col] == $matrix[$row + 1][$col + 1] && 
+          $matrix[$row][$col] == $matrix[$row + 2][$col + 2] &&
+          $matrix[$row][$col] == $matrix[$row + 3][$col + 3]) {
             return true;
         }
       }
     }
-    // diagonal upper left to lower right 
+    // check for a diagonal from the upper right to a lower left
     for ($row = $NUM_ROWS - 1; $row >= 3; $row--) { 
-      for ($col = 0; $col < $NUM_COLUMNS-3; $col++) {
+      for ($col = 0; $col < $NUM_COLUMNS; $col++) {
         if ($matrix[$row][$col] == $player && 
-          $matrix[$row][$col] == $matrix[$row-1][$col+1] && 
-          $matrix[$row][$col] == $matrix[$row-2][$col+2] &&
-          $matrix[$row][$col] == $matrix[$row-3][$col+3]) {
+          $matrix[$row][$col] == $matrix[$row - 1][$col + 1] && 
+          $matrix[$row][$col] == $matrix[$row - 2][$col + 2] &&
+          $matrix[$row][$col] == $matrix[$row - 3][$col + 3]) {
             return true;
         }
       }
