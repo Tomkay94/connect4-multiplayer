@@ -179,9 +179,10 @@ class Board extends CI_Controller {
     return false;
   } // End check_vertical
 
+
   /* Checks for a lower or upper diagonal sequence of a player's chips   */
   function check_diagonal($matrix, $player) {
-    // check for a diagonal from the lower left to an upper right
+    // check for a diagonal from an upper left to a lower right
     for ($row = 0; $row < NUM_ROWS - 3; $row++) { 
       for ($col = 0; $col < NUM_COLUMNS - 3; $col++) { 
         if ( 
@@ -193,9 +194,9 @@ class Board extends CI_Controller {
         }
       }
     }
-    // check for a diagonal from the upper right to a lower left
+    // check for a diagonal from a lower left to an upper right
     for ($row = NUM_ROWS - 1; $row >= 3; $row--) { 
-      for ($col = 0; $col < NUM_COLUMNS; $col++) {
+      for ($col = 0; $col < NUM_COLUMNS - 3; $col++) {
         if ($matrix[$row][$col] == $player && 
           $matrix[$row][$col] == $matrix[$row - 1][$col + 1] && 
           $matrix[$row][$col] == $matrix[$row - 2][$col + 2] &&
@@ -205,5 +206,5 @@ class Board extends CI_Controller {
       }
     }
     return false;
-  } // End check_diagonal
+  } // End check_diagonal}
 }
