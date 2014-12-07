@@ -13,6 +13,11 @@
       return false;
     }
   }
+
+  function reload_captcha() {
+    document.getElementById('captcha').src = '/securimage/securimage_show.php?' + Math.random();
+    return false;
+  }
 </script>
 
 <h1>New Account</h1>
@@ -37,6 +42,14 @@
   echo form_label('Email');
   echo form_error('email');
   echo form_input('email',set_value('email'),"required");
+?>
+  <label for="captcha_code">
+    Verifiy that you are human (Bot not allowed in connect 4 match!)
+  </label><br>
+  <img id="captcha" src="<?php base_url() ?>/securimage/securimage_show.php" alt="CAPTCHA Image" />
+  <input type="text" id="captcha_code" name="captcha_code" size="10" maxlength="6" />
+  <a href="#" onclick="reload_captcha();">[ Different Image ]</a>
+<?php
   echo form_submit('submit', 'Register');
   echo form_close();
 ?>
