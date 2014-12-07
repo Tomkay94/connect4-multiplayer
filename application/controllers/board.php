@@ -165,9 +165,8 @@ class Board extends CI_Controller {
 
   /* Checks for a vertical sequence of a player's chips */
   function check_vertical($matrix, $player) {
-    foreach($matrix as $row) {
-      $win_count = 0;
-      foreach($row as $col) {
+    for ($row = 0; $row < NUM_ROWS; $row++) {
+      for ($col = 0; $col < NUM_COLUMNS; $col++) {      
         if (
           $matrix[$row][$col] == $player &&
           $matrix[$row + 1][$col] == $player &&
