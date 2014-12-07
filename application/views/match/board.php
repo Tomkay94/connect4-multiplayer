@@ -70,7 +70,7 @@
           if (data.player) {
             var winner = [user, otherUser].sort()[data.player - 1];
             $('#status').html(
-              'Player ' + winner + ' wins<br>'
+              'Game ended<br>'
               + "Go back to the lobby to play against others!"
             );
           } else {
