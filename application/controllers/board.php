@@ -154,8 +154,10 @@ class Board extends CI_Controller {
 
   /* Takes a coordintate, finds where to put the 
      players piece and returns the updated game board */
-  function update($matrix, $chip_column) {
+  function update($chip_column) {
     $user = $_SESSION['user'];
+    $this->load->model('match_model');
+    $matrix = unserialize($this->match_model->getExclusive($user->match_id)->board_state);
     
     $row = 0;
     while($row < NUM_ROWS - 1 && 
@@ -167,9 +169,11 @@ class Board extends CI_Controller {
   }
 
   /* Checks for a horizontal sequence of a player's chips */
-  function check_horizontal($matrix) {
+  function check_horizontal() {
+    $this->load->model('match_model');
     $user = $_SESSION['user'];
-
+    $matrix = unserialize($this->match_model->getExclusive($user->match_id)->board_state);
+    
     for ($row = 0; $row < NUM_ROWS; $row++) {
       for ($col = 0; $col < NUM_COLUMNS; $col++) {     
         if (
@@ -185,8 +189,10 @@ class Board extends CI_Controller {
   }
 
   /* Checks for a vertical sequence of a player's chips */
-  function check_vertical($matrix) {
+  function check_vertical() {
     $user = $_SESSION['user'];
+    $this->load->model('match_model');
+    $matrix = unserialize($this->match_model->getExclusive($user->match_id)->board_state);
     
     for ($row = 0; $row < NUM_ROWS; $row++) {
       for ($col = 0; $col < NUM_COLUMNS; $col++) {      
@@ -204,8 +210,10 @@ class Board extends CI_Controller {
 
 
   /* Checks for a lower or upper diagonal sequence of a player's chips   */
-  function check_diagonal($matrix) {
+  function check_diagonal() {
     $user = $_SESSION['user'];
+    $this->load->model('match_model');
+    $matrix = unserialize($this->match_model->getExclusive($user->match_id)->board_state);
     
     // check for a diagonal from an upper left to a lower right
     for ($row = 0; $row < NUM_ROWS - 3; $row++) { 

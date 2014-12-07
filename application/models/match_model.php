@@ -37,7 +37,7 @@ class Match_model extends CI_Model {
 
   function updateBoard($id, $board) {
     $this->db->where('id', $id);
-    $board_blob = searialize($board);
+    $board_blob = serialize($board);
     return $this->db->update('match', array('board_state'=>$board_blob));
   }
 
