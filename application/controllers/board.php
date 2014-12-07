@@ -287,8 +287,7 @@ class Board extends CI_Controller {
     }
 
     // Return the player's ID, it's that person's turn. 
-    $player_turn_id= ($num_player_chips % 2 == 0) ? $player1 : $player2
-    return $player_turn_id;
+    return $player_turn_id= ($num_player_chips % 2 == 0) ? $player1 : $player2;
   }
 
   /* Checks for a horizontal sequence of a player's chips */
