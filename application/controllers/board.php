@@ -36,6 +36,7 @@ class Board extends CI_Controller {
     if ($user->user_status_id == User::WAITING) {
       $otherUser = $this->user_model->getFromId($invite->user2_id);
     }
+    
     else if ($user->user_status_id == User::PLAYING) {
       $match = $this->match_model->get($user->match_id);
       if ($match->user1_id == $user->id)
@@ -73,7 +74,7 @@ class Board extends CI_Controller {
  		$this->load->library('form_validation');
  		$this->form_validation->set_rules('msg', 'Message', 'required');
  		
- 		if ($this->form_validation->run() == TRUE) {
+    if ($this->form_validation->run() == TRUE) {
  			$this->load->model('user_model');
  			$this->load->model('match_model');
 
@@ -170,10 +171,15 @@ class Board extends CI_Controller {
 
   /* Check if a player has won */
   function check_if_winner() {
-    echo json_encode (array('status'=> (int)(check_horizontal() || check_vertical() || check_diagonal() )));
+    echo json_encode(
+      array('status'=> (int)(
+        check_horizontal() || 
+        check_vertical() || 
+        check_diagonal() )
+      )
+    );
     return;
   }
-
 
   /* Checks for a horizontal sequence of a player's chips */
   function check_horizontal() {
