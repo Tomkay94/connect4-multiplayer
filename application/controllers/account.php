@@ -34,7 +34,7 @@ class Account extends CI_Controller {
     $this->form_validation->set_rules('password', 'Password', 'required');
 
     if ($this->form_validation->run() == FALSE) {
-      $this->session->set_flashdata('error', 'validations did not execute!');
+      $this->session->set_flashdata('error', 'The info you provided failed to validate.');
       redirect('account/loginForm', 'refresh');
 
     } else {
@@ -86,10 +86,21 @@ class Account extends CI_Controller {
 
 
     if ($this->form_validation->run() == FALSE) {
-      $this->session->set_flashdata('error', 'validations did not execute!');
+      $this->session->set_flashdata('error', 'The info you provided failed to validate.');
       redirect('account/newForm', 'refresh');
 
     } else {
+
+      // Captcha
+      include_once FCPATH . '/securimage/securimage.php';
+      $securimage = new Securimage();
+      if ($securimage->check($_POST['captcha_code']) == false) {
+        // the code was incorrect
+        $this->session->set_flashdata('error', "Your captcha input doesn't match! Please try again.");
+        redirect('account/newForm', 'refresh');
+        return;
+      }
+
       $user = new User();
 
       $user->login = $this->input->post('username');
@@ -121,7 +132,7 @@ class Account extends CI_Controller {
     $this->form_validation->set_rules('newPassword', 'New Password', 'required');
 
     if ($this->form_validation->run() == FALSE) {
-      $this->session->set_flashdata('warning', 'validations did not execute!');
+      $this->session->set_flashdata('warning', 'The info you provided failed to validate.');
       redirect('account/updatePasswordForm', 'refresh');
 
     } else {
@@ -155,7 +166,7 @@ class Account extends CI_Controller {
     $this->form_validation->set_rules('email', 'email', 'required');
 
     if ($this->form_validation->run() == FALSE) {
-      $this->session->set_flashdata('warning', 'validations did not execute!');
+      $this->session->set_flashdata('warning', 'The info you provided failed to validate.');
       redirect('account/recoverPasswordForm', 'refresh');
 
     } else {
@@ -173,8 +184,9 @@ class Account extends CI_Controller {
         $config['smtp_host']    = 'ssl://smtp.gmail.com';
         $config['smtp_port']    = '465';
         $config['smtp_timeout'] = '7';
-        $config['smtp_user']    = 'your gmail user name';
-        $config['smtp_pass']    = 'your gmail password';
+        // reuse the same account we made from A3
+        $config['smtp_user']    = 'estore.mailer@gmail.com';
+        $config['smtp_pass']    = 'IJustWannaUseGoogleSMTP';
         $config['charset']    = 'utf-8';
         $config['newline']    = "\r\n";
         $config['mailtype'] = 'text'; // or html

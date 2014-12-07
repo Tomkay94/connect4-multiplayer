@@ -44,6 +44,12 @@ class Board extends CI_Controller {
         $otherUser = $this->user_model->getFromId($match->user1_id);
     }
 
+    if (!isset($otherUser)) {
+      $this->session->set_flashdata('warning', "To play, you have to select a worthy opponent!");
+      redirect('', 'refresh');
+      return;
+    }
+
     $data = array(
       'title' => 'Connect 4 game area',
       'main' => 'match/board',

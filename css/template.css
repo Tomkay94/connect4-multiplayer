@@ -5,6 +5,15 @@
 }
 
 
+/* Board Piece
+-------------------------------------------------- */
+#board .piece {
+  height: 4em;
+  border: 1px solid blue;
+  margin: 0.5em;
+}
+
+
 /* Main Template Style
 -------------------------------------------------- */
 html {
@@ -25,6 +34,7 @@ body {
 
 body > .container {
   padding: 50px 15px 0;
+  margin-bottom: 10em;
 }
 .container .text-muted {
   margin: 10px 0;
