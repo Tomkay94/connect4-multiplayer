@@ -60,61 +60,61 @@ class Arcade extends CI_Controller {
 	    	}
     }
     
-    function acceptInvitation() {
-	    	$user = $_SESSION['user'];
-	    	 
-	    	$this->load->model('user_model');
-	    	$this->load->model('invite_model');
-	    	$this->load->model('match_model');
-	    	
-	    	
-	    	$user = $this->user_model->get($user->login);
-	    	
-	    $invite = $this->invite_model->get($user->invite_id);
-	    $hostUser = $this->user_model->getFromId($invite->user1_id);
+  function acceptInvitation() {
+    $user = $_SESSION['user'];
 
-	    
-	    // start transactional mode
-	    $this->db->trans_begin();
-	    
-	    // change status of invitation to ACCEPTED
-	    $this->invite_model->updateStatus($invite->id,Invite::ACCEPTED);
-	    
-	    
-	    // create a match entry
-	    $match = new Match();
-	    $match->user1_id = $user->id;
-	    $match->user2_id = $hostUser->id;
-	    $this->match_model->insert($match);
-	    $matchId = mysql_insert_id();
+    $this->load->model('user_model');
+    $this->load->model('invite_model');
+    $this->load->model('match_model');
 
-	    // update status of both users
-	    $this->user_model->updateStatus($user->id,User::PLAYING);
-	    $this->user_model->updateStatus($hostUser->id,User::PLAYING);
-	    
-	    $this->user_model->updateMatch($user->id,$matchId);
-	    $this->user_model->updateMatch($hostUser->id,$matchId);
-	     
-	    
-	    if ($this->db->trans_status() === FALSE)
-	    		goto transactionerror;
-	    
-	    // if all went well commit changes
-	    $this->db->trans_commit();
-	    
-	    echo json_encode(array('status'=>'success'));
-	    
-	    return;
-	    
-	    // something went wrong
-	    transactionerror:
-	    $this->db->trans_rollback();
+    $user = $this->user_model->get($user->login);
+    $invite = $this->invite_model->get($user->invite_id);
+    $hostUser = $this->user_model->getFromId($invite->user1_id);
 
-	    echo json_encode(array('status'=>'failure'));
-	     
-	    
-    }
-    
+    // start transactional mode
+    $this->db->trans_begin();
+
+    // change status of invitation to ACCEPTED
+    $this->invite_model->updateStatus($invite->id, Invite::ACCEPTED);
+
+    // create a match entry
+    $match = new Match();
+    $match->user1_id = $user->id;
+    $match->user2_id = $hostUser->id;
+    $match->board_state = array(
+      array(0,0,0,0,0,0,0),
+      array(0,0,0,0,0,0,0),
+      array(0,0,0,0,0,0,0),
+      array(0,0,0,0,0,0,0),
+      array(0,0,0,0,0,0,0),
+      array(0,0,0,0,0,0,0)
+    );
+    $this->match_model->insert($match);
+    $matchId = mysql_insert_id();
+
+    // update status of both users
+    $this->user_model->updateStatus($user->id, User::PLAYING);
+    $this->user_model->updateStatus($hostUser->id, User::PLAYING);
+
+    $this->user_model->updateMatch($user->id, $matchId);
+    $this->user_model->updateMatch($hostUser->id, $matchId);
+
+    if ($this->db->trans_status() === FALSE)
+      goto transactionerror;
+
+    // if all went well commit changes
+    $this->db->trans_commit();
+
+    echo json_encode(array('status'=>'success'));
+    return;
+
+    // something went wrong
+    transactionerror:
+    $this->db->trans_rollback();
+
+    echo json_encode(array('status'=>'failure'));
+  }
+
 	function declineInvitation() {
 		$user = $_SESSION['user'];
 		 
