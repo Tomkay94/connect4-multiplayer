@@ -168,6 +168,13 @@ class Board extends CI_Controller {
     return $matrix;
   }
 
+  /* Check if a player has won */
+  function check_if_winner() {
+    echo json_encode (array('status'=> check_horizontal() || check_vertical() || check_diagonal()));
+    return;
+  }
+
+
   /* Checks for a horizontal sequence of a player's chips */
   function check_horizontal() {
     $this->load->model('match_model');
