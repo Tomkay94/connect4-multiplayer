@@ -55,21 +55,17 @@
       });
 
       // board update
-      /*
+      
       $.getJSON("<?= base_url() ?>board/update", function (data,text,jqXHR){
         if (data && data.status=='success') {
           // get back board object matrix
           updateBoard(data.board);
         }
       });
-      */
+      
     });
-<<<<<<< HEAD
-    // Check for messages
-=======
 
     // chat
->>>>>>> dev
     $('form').submit(function(){
       var arguments = $(this).serialize();
       $.post("<?= base_url() ?>board/postMsg", arguments, function (data,textStatus,jqXHR){

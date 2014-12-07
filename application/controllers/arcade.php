@@ -82,12 +82,12 @@ class Arcade extends CI_Controller {
     $match->user1_id = $user->id;
     $match->user2_id = $hostUser->id;
     $match->board_state = array(
-      array(0,0,0,0,0,0,0),
-      array(0,0,0,0,0,0,0),
-      array(0,0,0,0,0,0,0),
-      array(0,0,0,0,0,0,0),
-      array(0,0,0,0,0,0,0),
-      array(0,0,0,0,0,0,0)
+      array(0, 0, 0, 0, 0, 0, 0),
+      array(0, 0, 0, 0, 0, 0, 0),
+      array(0, 0, 0, 0, 0, 0, 0),
+      array(0, 0, 0, 0, 0, 0, 0),
+      array(0, 0, 0, 0, 0, 0, 0),
+      array(0, 0, 0, 0, 0, 0, 0)
     );
     $this->match_model->insert($match);
     $matchId = mysql_insert_id();

@@ -154,7 +154,7 @@ class Board extends CI_Controller {
 
   /* Takes a coordintate, finds where to put the 
      players piece and returns the updated game board */
-  function place_chip($matrix, $chip_column) {
+  function update($matrix, $chip_column) {
     $user = $_SESSION['user'];
     
     $row = 0;
