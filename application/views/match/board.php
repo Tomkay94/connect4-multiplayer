@@ -63,16 +63,22 @@
         }
       });
 
-      
       // board update
       $.getJSON("<?= base_url() ?>board/get_status", function (data,text,jqXHR){
         if (data) {
           // get back board object matrix
-          $('#status').html(data.message
-                           + "<br>Go back to the lobby and play against others!");
+          if (data.player) {
+            var winner = [user, otherUser].sort()[data.player - 1];
+            $('#status').html(
+              'Player ' + winner + ' wins<br>'
+              + "Go back to the lobby to play against others!"
+            );
+          } else {
+            $('#status').html("It's a tie!");
+          }
         }
       });
-      
+
     });
 
     // chat
