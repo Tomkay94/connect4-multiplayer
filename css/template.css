@@ -9,8 +9,12 @@
 -------------------------------------------------- */
 #board .piece {
   height: 4em;
-  border: 1px solid blue;
+  border: 1px solid #2980b9;
   margin: 0.5em;
+}
+
+#board .piece:hover {
+  border-color: #2ecc71;
 }
 
 

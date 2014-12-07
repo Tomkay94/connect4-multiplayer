@@ -1,12 +1,34 @@
 
 <script>
-  var otherUser = "<?= $otherUser->login ?>";
-  var user = "<?= $user->login ?>";
-  var status = "<?= $status ?>";
+  var status = "<?= $status ?>",
+      user = "<?= $user->login ?>",
+      userID = "<?= $user->id ?>",
+      otherUser = "<?= $otherUser->login ?>",
+      otherUserID = "<?= $otherUser->id ?>",
+      myTurn = false,
+      yellow = "#f1c40f", // self
+      red    = "#e74c3c"; // opponent
 
   $(function(){
-    // Check for inivtations
+    // used after AJAX requests to update board
+    function updateBoard(board) {
+      var grid = board;
+      for (row = 0; row < 6; row++)
+        for (col = 0; col < 7; col++) {
+          // TODO: need to figure out the ordering!
+          if (grid[row][col] == 0) {
+            $('#'+(col+1)+'-'+(row+1)).css("background-color", 'transparent');
+          } else if (grid[row][col] == userID) {
+            $('#'+(col+1)+'-'+(row+1)).css("background-color", yellow);
+          } else {
+            $('#'+(col+1)+'-'+(row+1)).css("background-color", red);
+          }
+        }
+    }
+
     $('body').everyTime(2000,function(){
+
+      // waiting for player
       if (status == 'waiting') {
         $.getJSON('<?= base_url() ?>arcade/checkInvitation', function(data, text, jqZHR){
           if (data && data.status=='rejected') {
@@ -20,17 +42,34 @@
         });
       }
 
+      // chat update
       $.getJSON("<?= base_url() ?>board/getMsg", function (data,text,jqXHR){
         if (data && data.status=='success') {
           var conversation = $('[name=conversation]').val();
           var msg = data.message;
-          if (msg.length > 0)
+          if (msg.length > 0) {
             $('[name=conversation]').val(conversation + "\n" + otherUser + ": " + msg);
             $('textarea').scrollTop($('textarea')[0].scrollHeight);
+          }
         }
       });
+
+      // board update
+      /*
+      $.getJSON("<?= base_url() ?>board/update", function (data,text,jqXHR){
+        if (data && data.status=='success') {
+          // get back board object matrix
+          updateBoard(data.board);
+        }
+      });
+      */
     });
+<<<<<<< HEAD
     // Check for messages
+=======
+
+    // chat
+>>>>>>> dev
     $('form').submit(function(){
       var arguments = $(this).serialize();
       $.post("<?= base_url() ?>board/postMsg", arguments, function (data,textStatus,jqXHR){
@@ -42,11 +81,24 @@
       return false;
     });
 
+    // board click
     $('#board .piece').click(function(e) {
       console.log(e.target.id);
       // demo
-      $('#'+e.target.id).css("background-color", '#'+(Math.random()*0xFFFFFF<<0).toString(16));
-    })
+      $('#'+e.target.id).css("background-color", yellow);
+
+      // post clicked coloumn to server
+      $.getJSON("<?= base_url() ?>board/post", function (data,text,jqXHR){
+        if (data && data.status=='success') {
+          updateBoard(data.board);
+
+        } else if (data && data.status=='invalid') {
+          // tell user that they made an invalid move
+          alert(data.message);
+        }
+      });
+
+    });
 
   });
 </script>
