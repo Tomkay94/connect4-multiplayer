@@ -15,7 +15,7 @@ class Arcade extends CI_Controller {
 
     if (in_array($method, $protected) && !isset($_SESSION['user'])) {
       $this->session->set_flashdata('info', 'Welcome to connect 4, please register/login first!');
-      redirect('account/loginForm', 'refresh'); //Then we redirect to the index page again
+      redirect('account/loginForm', 'refresh');
     }
 
     return call_user_func_array(array($this, $method), $params);

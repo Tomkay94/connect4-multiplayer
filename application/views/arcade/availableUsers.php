@@ -1,6 +1,11 @@
-<h2>Available Users</h2>
 
-<table>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Available Users</th>
+    </tr>
+  </thead>
+  <tbody>
 <?php
 if ($availableUsers) {
   foreach ($availableUsers as $user) {
@@ -16,4 +21,6 @@ if ($availableUsers) {
     }
   }
 ?>
+  </tbody>
 </table>
+

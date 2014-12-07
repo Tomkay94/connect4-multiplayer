@@ -129,6 +129,7 @@ jQuery.extend({
 	}
 });
 
+/* this won't work anymore
 if (jQuery.browser.msie)
 	jQuery(window).one("unload", function() {
 		var global = jQuery.timer.global;
@@ -138,3 +139,4 @@ if (jQuery.browser.msie)
 				jQuery.timer.remove(els[i], label);
 		}
 	});
+*/

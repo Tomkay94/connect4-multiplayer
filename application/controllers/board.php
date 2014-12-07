@@ -14,7 +14,7 @@ class Board extends CI_Controller {
 
     if (in_array($method,$protected) && !isset($_SESSION['user'])) {
       $this->session->set_flashdata('warning', 'You need to sign in first!');
-      redirect('account/loginForm', 'refresh'); //Then we redirect to the index page again
+      redirect('account/loginForm', 'refresh');
     }
 
     return call_user_func_array(array($this, $method), $params);

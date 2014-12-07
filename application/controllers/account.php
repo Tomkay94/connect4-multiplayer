@@ -14,7 +14,7 @@ class Account extends CI_Controller {
 
     if (in_array($method, $protected) && !isset($_SESSION['user'])) {
       $this->session->set_flashdata('warning', 'You need to sign in first!');
-      redirect('account/loginForm', 'refresh'); //Then we redirect to the index page again
+      redirect('account/loginForm', 'refresh');
     }
 
     return call_user_func_array(array($this, $method), $params);
@@ -34,7 +34,8 @@ class Account extends CI_Controller {
     $this->form_validation->set_rules('password', 'Password', 'required');
 
     if ($this->form_validation->run() == FALSE) {
-      $this->load->view('account/loginForm');
+      $this->session->set_flashdata('error', 'validations did not execute!');
+      redirect('account/loginForm', 'refresh');
 
     } else {
       $login = $this->input->post('username');
@@ -45,12 +46,11 @@ class Account extends CI_Controller {
 
       if (isset($user) && $user->comparePassword($clearPassword)) {
         $_SESSION['user'] = $user;
-        $data['user']=$user;
 
         $this->user_model->updateStatus($user->id, User::AVAILABLE);
 
         $this->session->set_flashdata('info', 'Welcome back!');
-        redirect('arcade/index', 'refresh'); //redirect to the main application page
+        redirect('arcade/index', 'refresh');
       }
       else {
         $this->session->set_flashdata('error', 'Incorrect username or password!');
@@ -86,7 +86,8 @@ class Account extends CI_Controller {
 
 
     if ($this->form_validation->run() == FALSE) {
-      $this->load->view('account/newForm');
+      $this->session->set_flashdata('error', 'validations did not execute!');
+      redirect('account/newForm', 'refresh');
 
     } else {
       $user = new User();
@@ -101,7 +102,8 @@ class Account extends CI_Controller {
       $this->load->model('user_model');
       $error = $this->user_model->insert($user);
 
-      $this->load->view('account/loginForm');
+      $this->session->set_flashdata('info', 'Registration Complete. Please sign in again.');
+      redirect('account/loginForm', 'refresh');
     }
   }
 
@@ -119,7 +121,8 @@ class Account extends CI_Controller {
     $this->form_validation->set_rules('newPassword', 'New Password', 'required');
 
     if ($this->form_validation->run() == FALSE) {
-      $this->load->view('account/updatePasswordForm');
+      $this->session->set_flashdata('warning', 'validations did not execute!');
+      redirect('account/updatePasswordForm', 'refresh');
 
     } else {
       $user = $_SESSION['user'];
@@ -131,10 +134,10 @@ class Account extends CI_Controller {
         $user->encryptPassword($newPassword);
         $this->load->model('user_model');
         $this->user_model->updatePassword($user);
-        redirect('arcade/index', 'refresh'); //Then we redirect to the index page again
+        redirect('arcade/index', 'refresh');
       } else {
-        $data['errorMsg']="Incorrect password!";
-        $this->load->view('account/updatePasswordForm',$data);
+        $this->session->set_flashdata('error', "Passwords don't match.");
+        redirect('account/updatePasswordForm', 'refresh');
       }
     }
   }
@@ -152,7 +155,8 @@ class Account extends CI_Controller {
     $this->form_validation->set_rules('email', 'email', 'required');
 
     if ($this->form_validation->run() == FALSE) {
-      $this->load->view('account/recoverPasswordForm');
+      $this->session->set_flashdata('warning', 'validations did not execute!');
+      redirect('account/recoverPasswordForm', 'refresh');
 
     } else {
       $email = $this->input->post('email');
@@ -186,14 +190,17 @@ class Account extends CI_Controller {
 
         $result = $this->email->send();
 
-        //$data['errorMsg'] = $this->email->print_debugger();	
+        // $this->session->set_flashdata('info', $this->email->print_debugger(););
 
-        //$this->load->view('emailPage',$data);
-        $this->load->view('account/emailPage');
+        $data = array(
+          'title' => 'Check your email',
+          'main' => 'account/emailPage'
+        );
+        $this->load->view('template', $data);
       }
       else {
-        $data['errorMsg']="No record exists for this email!";
-        $this->load->view('account/recoverPasswordForm',$data);
+        $this->session->set_flashdata('error', 'No record exists for this email!');
+        redirect('account/recoverPasswordForm', 'refresh');
       }
     }
   }

@@ -1,3 +1,10 @@
+/* Form Input Fix
+-------------------------------------------------- */
+.block-input form input {
+  display: block;
+}
+
+
 /* Main Template Style
 -------------------------------------------------- */
 html {

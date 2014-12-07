@@ -30,7 +30,7 @@
 
 <h3>
   Hello <?= $user->fullName() ?>, start a game with available users below:
-</h3>
+</h3><br>
 
 <div id="availableUsers"></div>
 

@@ -1,31 +1,8 @@
 
-<!DOCTYPE html>
+<h1>Password Recovery</h1>
+<p>Please check your email for your new password.</p>
 
-<html>
-	<head>
-		<style>
-			input {
-				display: block;
-			}
-		</style>
-
-	</head> 
-<body>  
-	<h1>Password Recovery</h1>
-	
-	<p>Please check your email for your new password.
-	</p>
-	
-	
-	
-<?php 
-	if (isset($errorMsg)) {
-		echo "<p>" . $errorMsg . "</p>";
-	}
-
-	echo "<p>" . anchor('account/index','Login') . "</p>";
-?>	
-</body>
-
-</html>
+<a class="btn btn-lg btn-info btn-block" href="/account/index">
+  Login
+</a>
 
