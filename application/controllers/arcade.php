@@ -175,7 +175,6 @@ class Arcade extends CI_Controller {
 		} 
 	}
 	
-	
     function invite() {
     		try {
     		$login = $this->input->get('login');

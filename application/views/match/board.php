@@ -6,6 +6,7 @@
       otherUser = "<?= $otherUser->login ?>",
       otherUserID = "<?= $otherUser->id ?>",
       myTurn = false,
+      processing = "yellow",
       yellow = "#f1c40f", // self
       red    = "#e74c3c"; // opponent
 
@@ -13,7 +14,6 @@
     // used after AJAX requests to update board
     function updateBoard(board) {
       var grid = board;
-      console.log("updating board", board);
       for (row = 0; row < 6; row++)
         for (col = 0; col < 7; col++) {
           // TODO: need to figure out the ordering!
@@ -62,6 +62,16 @@
           updateBoard(data.board);
         }
       });
+
+      
+      // board update
+      $.getJSON("<?= base_url() ?>board/get_status", function (data,text,jqXHR){
+        if (data) {
+          // get back board object matrix
+          $('#status').html(data.message
+                           + "<br>Go back to the lobby and play against others!");
+        }
+      });
       
     });
 
@@ -79,29 +89,23 @@
 
     // board click
     $('#board .piece').click(function(e) {
-      console.log(e.target.id);
-      // demo
-      $('#'+e.target.id).css("background-color", yellow);
-
-      // post clicked coloumn to server
-      $.getJSON("<?= base_url() ?>board/post", function (data,text,jqXHR){
-        if (data && data.status=='success') {
-          updateBoard(data.board);
-
-        } else if (data && data.status=='invalid') {
-          // tell user that they made an invalid move
-          alert(data.message);
-        }
-      });
+      // highlight the clicked location
+      $('#'+e.target.id).css("background-color", processing);
 
       // put move
       var col_num = e.target.id.split('-')[0];
       $.post("<?= base_url() ?>board/update", {'col': col_num}, function (data,text,jqXHR){
-        console.log('data', data);
-        if (data)
+        if (data) {
+          data = JSON.parse(data);
+          if (data.status == 'success') {
+            // update board immediately
+            console.log('updating');
+            updateBoard(data.board);
+          } else 
           if (data.status == 'failure') {
-              alert(data.message);    
+            alert(data.message);    
           }
+        }
       });
 
     });
@@ -127,6 +131,7 @@
 
     <br>
     <p>Click on a column to put down a piece in that column.</p>
+    <p>Yellow - You, Red - Opponent.</p>
     <br>
 
     <div class="col-md-1"></div>

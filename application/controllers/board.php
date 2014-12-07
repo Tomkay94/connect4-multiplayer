@@ -165,6 +165,7 @@ class Board extends CI_Controller {
 
     $user = $_SESSION['user'];
     $this->load->model('match_model');
+    $this->load->model('user_model');
 
     // TRANSACTION
     $this->db->trans_begin();
@@ -208,6 +209,8 @@ class Board extends CI_Controller {
       } else {
         $this->match_model->updateStatus($match->id, Match::U2WON);
       }
+      $this->user_model->updateStatus($match->user1_id, User::AVAILABLE);
+      $this->user_model->updateStatus($match->user2_id, User::AVAILABLE);
     }
 
     // TODO: check for tie!!
@@ -220,7 +223,7 @@ class Board extends CI_Controller {
 
     $this->db->trans_commit();
 
-    echo json_encode(array('board'=>$matrix));
+    echo json_encode(array('status'=>'success', 'board'=>$matrix));
     return;
 
     transactionerror:
@@ -238,15 +241,29 @@ class Board extends CI_Controller {
   }
 
   /* Check if a player has won */
-  function check_if_winner() {
-    $has_winner = false;
-    echo json_encode(
-      array(
-        'winner_found'=> $has_winner,
-        'winner' => false
-      )
-    );
-    return;
+  function get_status() {
+
+    $user = $_SESSION['user'];
+    $this->load->model('match_model');
+    $match = $this->match_model->getExclusive($user->match_id);
+
+    if ($match->match_status_id != Match::ACTIVE) {
+      if ($match->match_status_id == Match::U1WON) {
+        $msg = "The challenger wins!";
+      } else if ($match->match_status_id == Match::U2WON) {
+        $msg = "The invitee wins!";
+      } else {
+        $msg = "It's a Tie!";
+      }
+
+      echo json_encode(
+        array(
+          'end_game'=> true,
+          'message' => $msg
+        )
+      );
+    }
+
   }
 
   /* Checks for a horizontal sequence of a player's chips */
