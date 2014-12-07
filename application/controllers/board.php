@@ -158,7 +158,8 @@ class Board extends CI_Controller {
     $user = $_SESSION['user'];
     
     $row = 0;
-    while($row < NUM_ROWS - 1 && $matrix[$row + 1][$chip_column - 1] == 0) {
+    while($row < NUM_ROWS - 1 && 
+          $matrix[$row + 1][$chip_column - 1] == 0) {
       $row++;
     }
     $matrix[$row][$chip_column -1] = $user->id;
@@ -173,9 +174,9 @@ class Board extends CI_Controller {
       for ($col = 0; $col < NUM_COLUMNS; $col++) {     
         if (
           $matrix[$row][$col] == $user->id &&
-          $matrix[$row][$col + 1] == $user->id->id &&
-          $matrix[$row][$col + 2] == $user->id->id &&
-          $matrix[$row][$col + 3] == $user->id->id) {
+          $matrix[$row][$col + 1] == $user->id &&
+          $matrix[$row][$col + 2] == $user->id &&
+          $matrix[$row][$col + 3] == $user->id) {
             return true;
         }
       } // End foreach row as column
