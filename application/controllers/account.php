@@ -184,8 +184,9 @@ class Account extends CI_Controller {
         $config['smtp_host']    = 'ssl://smtp.gmail.com';
         $config['smtp_port']    = '465';
         $config['smtp_timeout'] = '7';
-        $config['smtp_user']    = 'your gmail user name';
-        $config['smtp_pass']    = 'your gmail password';
+        // reuse the same account we made from A3
+        $config['smtp_user']    = 'estore.mailer@gmail.com';
+        $config['smtp_pass']    = 'IJustWannaUseGoogleSMTP';
         $config['charset']    = 'utf-8';
         $config['newline']    = "\r\n";
         $config['mailtype'] = 'text'; // or html
