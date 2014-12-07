@@ -37,6 +37,9 @@
             <li>
               <a href="<?= base_url(); ?>">Lobby</a>
             </li>
+            <li>
+              <a href="<?= base_url(); ?>board">Game</a>
+            </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
         <?php

@@ -28,11 +28,9 @@ class Board extends CI_Controller {
     $this->load->model('match_model');
 
     $user = $this->user_model->get($user->login);
-
     $invite = $this->invite_model->get($user->invite_id);
 
     if ($user->user_status_id == User::WAITING) {
-      $invite = $this->invite_model->get($user->invite_id);
       $otherUser = $this->user_model->getFromId($invite->user2_id);
     }
     else if ($user->user_status_id == User::PLAYING) {
@@ -43,8 +41,12 @@ class Board extends CI_Controller {
         $otherUser = $this->user_model->getFromId($match->user1_id);
     }
 
-    $data['user']=$user;
-    $data['otherUser']=$otherUser;
+    $data = array(
+      'title' => 'Connect 4 game area',
+      'main' => 'match/board',
+      'user' => $user,
+      'otherUser' => $otherUser
+    );
 
     switch($user->user_status_id) {
       case User::PLAYING:	
@@ -55,7 +57,7 @@ class Board extends CI_Controller {
         break;
     }
 
-    $this->load->view('match/board',$data);
+    $this->load->view('template', $data);
   }
 
  	function postMsg() {
