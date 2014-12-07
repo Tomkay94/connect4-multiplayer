@@ -2,6 +2,9 @@
 
 class Board extends CI_Controller {
 
+  $NUM_COLUMNS = 7; 
+  $NUM_ROWS = 6;
+
   function __construct() {
     // Call the Controller constructor
     parent::__construct();
@@ -142,6 +145,54 @@ class Board extends CI_Controller {
 		error:
 		echo json_encode(array('status'=>'failure','message'=>$errormsg));
  	}
- 	
- }
 
+  /* Checks for a horizontal sequence of a player's chips */
+  function check_horizontal($matrix, $player) {
+    for ($row = 0; $row < $NUM_ROWS; $row++) {
+      for ($column = 0; $column < $NUM_COLUMNS; $column++) {      
+        if (
+          $matrix[$row][$column] == $player &&
+          $matrix[$row][$column + 1] == $player &&
+          $matrix[$row][$column + 2] == $player &&
+          $matrix[$row][$column + 3] == $player) {
+            return true;
+        }
+      } // End foreach row as column
+    } // End foreach matrix as row
+    return false;
+  }
+
+  /* Checks for a vertical sequence of a player's chips */
+  function check_vertical($matrix, $player) {
+    foreach($matrix as $row) {
+      $win_count = 0;
+      foreach($row as $column) {
+        if (
+          $matrix[$row][$column] == $player &&
+          $matrix[$row + 1][$column] == $player &&
+          $matrix[$row + 2][$column] == $player &&
+          $matrix[$row + 3][$column] == $player) {
+            return true;
+        }
+      } // End foreach row as column
+    } // End foreach matrix as row
+    return false;
+  } // End check_vertical
+
+  /* Checks for a diagonal sequence of a player's chips
+  NOT FINISHED
+   */
+  function check_diagonal($matrix, $player) {
+    foreach($matrix as $row) {
+      $win_count = 0;
+      foreach($row as $column) {
+        if($matrix[$row + $NUM_ROWS][$column + 1] == $player) {
+          $win_count++;  
+        }
+        else {
+          $win_count = 0;
+        } 
+      } // End foreach row as column
+    } // End foreach matrix as row
+  } // End check_diagonal
+}
