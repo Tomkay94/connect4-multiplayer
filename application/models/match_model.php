@@ -21,7 +21,7 @@ class Match_model extends CI_Model {
 			return null;
 	}
 	
-	
+		
 	function insert($match) {
 		return $this->db->insert('match',$match);
 	}

@@ -154,24 +154,28 @@ class Board extends CI_Controller {
 
   /* Takes a coordintate, finds where to put the 
      players piece and returns the updated game board */
-  function place_chip($matrix, $chip_column, $player) {
+  function place_chip($matrix, $chip_column) {
+    $user = $_SESSION['user'];
+    
     $row = 0;
     while($row < NUM_ROWS - 1 && $matrix[$row + 1][$chip_column - 1] == 0) {
       $row++;
     }
-    $matrix[$row][$chip_column -1] = $player;
+    $matrix[$row][$chip_column -1] = $user->id;
     return $matrix;
   }
 
   /* Checks for a horizontal sequence of a player's chips */
-  function check_horizontal($matrix, $player) {
+  function check_horizontal($matrix) {
+    $user = $_SESSION['user'];
+
     for ($row = 0; $row < NUM_ROWS; $row++) {
       for ($col = 0; $col < NUM_COLUMNS; $col++) {     
         if (
-          $matrix[$row][$col] == $player &&
-          $matrix[$row][$col + 1] == $player &&
-          $matrix[$row][$col + 2] == $player &&
-          $matrix[$row][$col + 3] == $player) {
+          $matrix[$row][$col] == $user->id &&
+          $matrix[$row][$col + 1] == $user->id->id &&
+          $matrix[$row][$col + 2] == $user->id->id &&
+          $matrix[$row][$col + 3] == $user->id->id) {
             return true;
         }
       } // End foreach row as column
@@ -180,14 +184,16 @@ class Board extends CI_Controller {
   }
 
   /* Checks for a vertical sequence of a player's chips */
-  function check_vertical($matrix, $player) {
+  function check_vertical($matrix) {
+    $user = $_SESSION['user'];
+    
     for ($row = 0; $row < NUM_ROWS; $row++) {
       for ($col = 0; $col < NUM_COLUMNS; $col++) {      
         if (
-          $matrix[$row][$col] == $player &&
-          $matrix[$row + 1][$col] == $player &&
-          $matrix[$row + 2][$col] == $player &&
-          $matrix[$row + 3][$col] == $player) {
+          $matrix[$row][$col] == $user->id &&
+          $matrix[$row + 1][$col] == $user->id &&
+          $matrix[$row + 2][$col] == $user->id &&
+          $matrix[$row + 3][$col] == $user->id) {
             return true;
         }
       } // End foreach row as column
@@ -197,12 +203,14 @@ class Board extends CI_Controller {
 
 
   /* Checks for a lower or upper diagonal sequence of a player's chips   */
-  function check_diagonal($matrix, $player) {
+  function check_diagonal($matrix) {
+    $user = $_SESSION['user'];
+    
     // check for a diagonal from an upper left to a lower right
     for ($row = 0; $row < NUM_ROWS - 3; $row++) { 
       for ($col = 0; $col < NUM_COLUMNS - 3; $col++) { 
         if ( 
-          $matrix[$row][$col] == $player && 
+          $matrix[$row][$col] == $user->id && 
           $matrix[$row][$col] == $matrix[$row + 1][$col + 1] && 
           $matrix[$row][$col] == $matrix[$row + 2][$col + 2] &&
           $matrix[$row][$col] == $matrix[$row + 3][$col + 3]) {
@@ -213,7 +221,7 @@ class Board extends CI_Controller {
     // check for a diagonal from a lower left to an upper right
     for ($row = NUM_ROWS - 1; $row >= 3; $row--) { 
       for ($col = 0; $col < NUM_COLUMNS - 3; $col++) {
-        if ($matrix[$row][$col] == $player && 
+        if ($matrix[$row][$col] == $user->id && 
           $matrix[$row][$col] == $matrix[$row - 1][$col + 1] && 
           $matrix[$row][$col] == $matrix[$row - 2][$col + 2] &&
           $matrix[$row][$col] == $matrix[$row - 3][$col + 3]) {

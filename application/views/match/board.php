@@ -5,6 +5,7 @@
   var status = "<?= $status ?>";
 
   $(function(){
+    // Check for inivtations
     $('body').everyTime(2000,function(){
       if (status == 'waiting') {
         $.getJSON('<?= base_url() ?>arcade/checkInvitation', function(data, text, jqZHR){
@@ -29,7 +30,7 @@
         }
       });
     });
-
+    // Check for messages
     $('form').submit(function(){
       var arguments = $(this).serialize();
       $.post("<?= base_url() ?>board/postMsg", arguments, function (data,textStatus,jqXHR){
