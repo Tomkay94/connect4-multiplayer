@@ -179,20 +179,30 @@ class Board extends CI_Controller {
     return false;
   } // End check_vertical
 
-  /* Checks for a diagonal sequence of a player's chips
-  NOT FINISHED
-   */
+  /* Checks for a lower or upper diagonal sequence of a player's chips   */
   function check_diagonal($matrix, $player) {
-    foreach($matrix as $row) {
-      $win_count = 0;
-      foreach($row as $column) {
-        if($matrix[$row + $NUM_ROWS][$column + 1] == $player) {
-          $win_count++;  
+    for ($row = 0; $row < $NUM_ROWS - 3; $row++) { 
+      for ($col=0; $col < $NUM_COLUMNS - 3; $col++) { 
+        if ( 
+          $matrix[$row][$col] == $player && 
+          $matrix[$row][$col] == $matrix[$row+1][$col+1] && 
+          $matrix[$row][$col] == $matrix[$row+2][$col+2] &&
+          $matrix[$row][$col] == $matrix[$row+3][$col+3]) {
+            return true;
         }
-        else {
-          $win_count = 0;
-        } 
-      } // End foreach row as column
-    } // End foreach matrix as row
+      }
+    }
+    // diagonal upper left to lower right 
+    for ($row = $NUM_ROWS - 1; $row >= 3; $row--) { 
+      for ($col = 0; $col < $NUM_COLUMNS-3; $col++) {
+        if ($matrix[$row][$col] == $player && 
+          $matrix[$row][$col] == $matrix[$row-1][$col+1] && 
+          $matrix[$row][$col] == $matrix[$row-2][$col+2] &&
+          $matrix[$row][$col] == $matrix[$row-3][$col+3]) {
+            return true;
+        }
+      }
+    }
+    return false;
   } // End check_diagonal
 }
