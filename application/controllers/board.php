@@ -170,7 +170,7 @@ class Board extends CI_Controller {
 
   /* Check if a player has won */
   function check_if_winner() {
-    echo json_encode (array('status'=> check_horizontal() || check_vertical() || check_diagonal()));
+    echo json_encode (array('status'=> (int)(check_horizontal() || check_vertical() || check_diagonal() )));
     return;
   }
 

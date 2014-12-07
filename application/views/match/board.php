@@ -95,7 +95,7 @@
 
       // Check if the player won
       $.getJSON("<?= base_url() ?>board/check_if_winner", function (data,text,jqXHR){
-        if (data && data.status == true) {
+        if (data && data.status == 1) {
             alert("Congrats, you won the game!");    
         }
       });
