@@ -279,7 +279,7 @@ class Board extends CI_Controller {
     // Even # of chips, player 1's turn
     // Odd # of chips, player 2's turn
     for ($row = 0; $row < self::NUM_ROWS; $row++) {
-      for ($col = 0; $col < self::NUM_COLUMNS - 3; $col++) {     
+      for ($col = 0; $col < self::NUM_COLUMNS; $col++) {     
         if ($matrix[$row][$col] != 0) {
           $num_player_chips++;
         }
