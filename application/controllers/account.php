@@ -49,11 +49,12 @@ class Account extends CI_Controller {
 
         $this->user_model->updateStatus($user->id, User::AVAILABLE);
 
+        $this->session->set_flashdata('info', 'Welcome back!');
         redirect('arcade/index', 'refresh'); //redirect to the main application page
       }
       else {
-        $data['errorMsg']='Incorrect username or password!';
-        $this->load->view('account/loginForm',$data);
+        $this->session->set_flashdata('error', 'Incorrect username or password!');
+        redirect('account/loginForm', 'refresh');
       }
 
     }
@@ -64,7 +65,7 @@ class Account extends CI_Controller {
     $this->load->model('user_model');
     $this->user_model->updateStatus($user->id, User::OFFLINE);
     session_destroy();
-    redirect('account/index', 'refresh'); //Then we redirect to the index page again
+    redirect('', 'refresh');
   }
 
   function newForm() {
@@ -105,7 +106,11 @@ class Account extends CI_Controller {
   }
 
   function updatePasswordForm() {
-    $this->load->view('account/updatePasswordForm');
+    $data = array(
+      'title' => 'Change Password',
+      'main' => 'account/updatePasswordForm'
+    );
+    $this->load->view('template', $data);
   }
 
   function updatePassword() {
@@ -135,7 +140,11 @@ class Account extends CI_Controller {
   }
 
   function recoverPasswordForm() {
-    $this->load->view('account/recoverPasswordForm');
+    $data = array(
+      'title' => 'Password Recovery',
+      'main' => 'account/recoverPasswordForm'
+    );
+    $this->load->view('template', $data);
   }
 
   function recoverPassword() {

@@ -28,11 +28,9 @@
   });
 </script>
 
-<section>
-  <div>
-    Hello <?= $user->fullName() ?>
-  </div>
+<h3>
+  Hello <?= $user->fullName() ?>, start a game with available users below:
+</h3>
 
-  <div id="availableUsers"></div>
-</section>
+<div id="availableUsers"></div>
 

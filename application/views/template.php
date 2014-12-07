@@ -8,23 +8,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- asset imports -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="<?= base_url(); ?>css/template.css">
     <link href='//fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
 
     <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
     <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
     <script src="<?= base_url() ?>/js/jquery.timers.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
   </head>
 
   <body>
-    <nav>
-      <ul>
-        <li>
-          <a href="<?= base_url(); ?>">Connect 4</a>
-        </li>
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                  data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="<?= base_url(); ?>">Connect 4</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li>
+              <a href="<?= base_url(); ?>">Lobby</a>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
         <?php
           if (isset($_SESSION['user'])) {
         ?>
@@ -38,64 +52,63 @@
           } else { // not signed in
         ?>
             <li>
+              <a href="<?= base_url(); ?>account/newForm">Register</a>
+            </li>
+            <li>
               <a href="<?= base_url(); ?>account/loginForm">Sign In</a>
             </li>
         <?php
           }
         ?>
-      </ul>
+          </ul>
+        </div>
+      </div>
     </nav>
 
-    <?php
-      // flash notifications
-      if ($this->session->flashdata('error') ||
-          $this->session->flashdata('warning') ||
-          $this->session->flashdata('info')) {
-    ?>
-      <br /><br />
+    <div class="container">
+      <?php
+        // flash notifications
+        if ($this->session->flashdata('error') ||
+            $this->session->flashdata('warning') ||
+            $this->session->flashdata('info')) {
+      ?>
+        <br />
+
+        <?php
+          if ($this->session->flashdata('error')) {
+        ?>
+          <div class="alert alert-danger" role="alert">
+            <?= $this->session->flashdata('error') ?>
+          </div>
+
+        <?php
+          }
+          if ($this->session->flashdata('warning')) {
+        ?>
+          <div class="alert alert-warning" role="alert">
+            <?= $this->session->flashdata('warning') ?>
+          </div>
+
+        <?php
+          }
+          if ($this->session->flashdata('info')) {
+        ?>
+          <div class="alert alert-info" role="alert">
+            <?= $this->session->flashdata('info') ?>
+          </div>
 
       <?php
-        if ($this->session->flashdata('error')) {
-      ?>
-        <div class="alert alert-danger" role="alert">
-          <?= $this->session->flashdata('error') ?>
-        </div>
-
-      <?php
+          }
         }
-        if ($this->session->flashdata('warning')) {
       ?>
-        <div class="alert alert-warning" role="alert">
-          <?= $this->session->flashdata('warning') ?>
-        </div>
 
-      <?php
-        }
-        if ($this->session->flashdata('info')) {
-      ?>
-        <div class="alert alert-info" role="alert">
-          <?= $this->session->flashdata('info') ?>
-        </div>
-
-    <?php
-        }
-      }
-    ?>
-
-    <div id="main">
       <?php $this->load->view($main); ?>
     </div>
 
-    <div class="container">
-      <hr />
-      <!-- Footer -->
-      <footer>
-        <div class="row">
-          <div class="col-lg-12">
-            <p>Copyright &copy; C4 2014</p>
-          </div>
-        </div>
-      </footer>
-    </div>
+    <footer class="footer">
+      <div class="container">
+        <p class="text-muted">Copyright &copy; Connect4 2014</p>
+      </div>
+    </footer>
   </body>
 </html>
