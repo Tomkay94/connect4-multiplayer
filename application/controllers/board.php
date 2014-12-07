@@ -1,9 +1,9 @@
 <?php
 
 class Board extends CI_Controller {
-
-  $NUM_COLUMNS = 7; 
-  $NUM_ROWS = 6;
+  
+  const NUM_COLUMNS = 7;
+  const NUM_ROWS = 6;
 
   function __construct() {
     // Call the Controller constructor
@@ -146,10 +146,11 @@ class Board extends CI_Controller {
 		echo json_encode(array('status'=>'failure','message'=>$errormsg));
  	}
 
+
   /* Checks for a horizontal sequence of a player's chips */
   function check_horizontal($matrix, $player) {
-    for ($row = 0; $row < $NUM_ROWS; $row++) {
-      for ($col = 0; $col < $NUM_COLUMNS; $col++) {      
+    for ($row = 0; $row < NUM_ROWS; $row++) {
+      for ($col = 0; $col < NUM_COLUMNS; $col++) {      
         if (
           $matrix[$row][$col] == $player &&
           $matrix[$row][$col + 1] == $player &&
@@ -182,8 +183,8 @@ class Board extends CI_Controller {
   /* Checks for a lower or upper diagonal sequence of a player's chips   */
   function check_diagonal($matrix, $player) {
     // check for a diagonal from the lower left to an upper right
-    for ($row = 0; $row < $NUM_ROWS - 3; $row++) { 
-      for ($col = 0; $col < $NUM_COLUMNS - 3; $col++) { 
+    for ($row = 0; $row < NUM_ROWS - 3; $row++) { 
+      for ($col = 0; $col < NUM_COLUMNS - 3; $col++) { 
         if ( 
           $matrix[$row][$col] == $player && 
           $matrix[$row][$col] == $matrix[$row + 1][$col + 1] && 
@@ -194,8 +195,8 @@ class Board extends CI_Controller {
       }
     }
     // check for a diagonal from the upper right to a lower left
-    for ($row = $NUM_ROWS - 1; $row >= 3; $row--) { 
-      for ($col = 0; $col < $NUM_COLUMNS; $col++) {
+    for ($row = NUM_ROWS - 1; $row >= 3; $row--) { 
+      for ($col = 0; $col < NUM_COLUMNS; $col++) {
         if ($matrix[$row][$col] == $player && 
           $matrix[$row][$col] == $matrix[$row - 1][$col + 1] && 
           $matrix[$row][$col] == $matrix[$row - 2][$col + 2] &&
