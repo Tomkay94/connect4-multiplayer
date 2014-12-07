@@ -163,14 +163,9 @@ class Board extends CI_Controller {
       goto error;
     }
 
-    // Check whose turn it is
-    if(!get_player_turn()) {
-      goto notYourTurn;
-    }
-
-    $user = $_SESSION['user'];
     $this->load->model('match_model');
     $this->load->model('user_model');
+    $user = $this->user_model->getFromId($_SESSION['user']->id);
 
     // TRANSACTION
     $this->db->trans_begin();
@@ -178,6 +173,12 @@ class Board extends CI_Controller {
     $match = $this->match_model->getExclusive($user->match_id);
     if ($match->match_status_id != Match::ACTIVE) {
       $errormsg = "Game already ended.";
+      goto transactionerror;
+    }
+
+    // Check whose turn it is
+    if(!self::get_player_turn()) {
+      $errormsg = "It's not your turn!";
       goto transactionerror;
     }
 
@@ -231,9 +232,6 @@ class Board extends CI_Controller {
     echo json_encode(array('status'=>'success', 'board'=>$matrix));
     return;
 
-    notYourTurn:
-      echo json_encode(array('message'=>"function() {alert('It\'s not your turn!')}"));
-
     transactionerror:
       $this->db->trans_rollback();
 
@@ -242,8 +240,9 @@ class Board extends CI_Controller {
   }
 
   function refreshBoard() {
-    $user = $_SESSION['user'];
+    $this->load->model('user_model');
     $this->load->model('match_model');
+    $user = $this->user_model->getFromId($_SESSION['user']->id);
     $matrix = unserialize($this->match_model->getExclusive($user->match_id)->board_state);
     echo json_encode(array('board'=>$matrix));
   }
@@ -251,23 +250,28 @@ class Board extends CI_Controller {
   /* Check if a player has won */
   function get_status() {
 
-    $user = $_SESSION['user'];
+    $this->load->model('user_model');
     $this->load->model('match_model');
+    $user = $this->user_model->getFromId($_SESSION['user']->id);
     $match = $this->match_model->getExclusive($user->match_id);
 
     if ($match->match_status_id != Match::ACTIVE) {
       if ($match->match_status_id == Match::U1WON) {
-        $msg = "The challenger wins!";
+        $msg = "Game ended";
+        $sort = 1;
       } else if ($match->match_status_id == Match::U2WON) {
-        $msg = "The invitee wins!";
+        $msg = "Game ended";
+        $sort = 2;
       } else {
         $msg = "It's a Tie!";
+        $sort = 0;
       }
 
       echo json_encode(
         array(
           'end_game'=> true,
-          'message' => $msg
+          'message' => $msg,
+          'player' => $sort
         )
       );
     }
@@ -277,10 +281,11 @@ class Board extends CI_Controller {
   /* Gets the ID of the current player's turn */
   function get_player_turn() {
     $this->load->model('match_model');
-    $user = $_SESSION['user'];
+    $this->load->model('user_model');
+    $user = $this->user_model->getFromId($_SESSION['user']->id);
     $match = $this->match_model->getExclusive($user->match_id);
-    $player1 = $this->match_model->user1_id;
-    $player2 = $this->match_model->user2_id;
+    $player1 = $match->user1_id;
+    $player2 = $match->user2_id;
     $matrix = unserialize($match->board_state);
     $num_player_chips = 0;
 
@@ -302,7 +307,8 @@ class Board extends CI_Controller {
   /* Checks for a horizontal sequence of a player's chips */
   function check_horizontal() {
     $this->load->model('match_model');
-    $user = $_SESSION['user'];
+    $this->load->model('user_model');
+    $user = $this->user_model->getFromId($_SESSION['user']->id);
     $match = $this->match_model->getExclusive($user->match_id);
     $matrix = unserialize($match->board_state);
     
@@ -322,7 +328,8 @@ class Board extends CI_Controller {
 
   /* Checks for a vertical sequence of a player's chips */
   function check_vertical() {
-    $user = $_SESSION['user'];
+    $this->load->model('user_model');
+    $user = $this->user_model->getFromId($_SESSION['user']->id);
     $this->load->model('match_model');
     $matrix = unserialize($this->match_model->getExclusive($user->match_id)->board_state);
     
@@ -343,7 +350,8 @@ class Board extends CI_Controller {
 
   /* Checks for a lower or upper diagonal sequence of a player's chips   */
   function check_diagonal() {
-    $user = $_SESSION['user'];
+    $this->load->model('user_model');
+    $user = $this->user_model->getFromId($_SESSION['user']->id);
     $this->load->model('match_model');
     $matrix = unserialize($this->match_model->getExclusive($user->match_id)->board_state);
     
