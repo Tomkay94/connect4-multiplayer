@@ -232,7 +232,7 @@ class Board extends CI_Controller {
     return;
 
     notYourTurn:
-      echo json_encode(array('message'=>"function() {alert('It\'s not your turn!')}"));
+      echo json_encode(array('status'=>'failure', 'message'=>"It's not your turn!"));
 
     transactionerror:
       $this->db->trans_rollback();
