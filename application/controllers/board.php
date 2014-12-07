@@ -266,6 +266,31 @@ class Board extends CI_Controller {
 
   }
 
+  /* Gets the ID of the current player's turn */
+  function get_player_turn() {
+    $this->load->model('match_model');
+    $user = $_SESSION['user'];
+    $match = $this->match_model->getExclusive($user->match_id);
+    $player1 = $this->match_model->user1_id;
+    $player2 = $this->match_model->user2_id;
+    $matrix = unserialize($match->board_state);
+    
+    $num_player_chips = 0;
+    // Even # of chips, player 1's turn
+    // Odd # of chips, player 2's turn
+    for ($row = 0; $row < self::NUM_ROWS; $row++) {
+      for ($col = 0; $col < self::NUM_COLUMNS - 3; $col++) {     
+        if ($matrix[$row][$col] != 0) {
+          $num_player_chips++;
+        }
+      }
+    }
+
+    // Return the player's ID, it's that person's turn. 
+    $player_turn_id= ($num_player_chips % 2 == 0) ? $player1 : $player2
+    return $player_turn_id;
+  }
+
   /* Checks for a horizontal sequence of a player's chips */
   function check_horizontal() {
     $this->load->model('match_model');
