@@ -152,11 +152,21 @@ class Board extends CI_Controller {
 		echo json_encode(array('status'=>'failure','message'=>$errormsg));
  	}
 
+  /* Takes a coordintate, finds where to put the 
+     players piece and returns the updated game board */
+  function place_chip($matrix, $chip_column, $player) {
+    $row = 0;
+    while($row < NUM_ROWS - 1 && $matrix[$row + 1][$chip_column - 1] == 0) {
+      $row++;
+    }
+    $matrix[$row][$chip_column -1] = $player;
+    return $matrix;
+  }
 
   /* Checks for a horizontal sequence of a player's chips */
   function check_horizontal($matrix, $player) {
     for ($row = 0; $row < NUM_ROWS; $row++) {
-      for ($col = 0; $col < NUM_COLUMNS; $col++) {      
+      for ($col = 0; $col < NUM_COLUMNS; $col++) {     
         if (
           $matrix[$row][$col] == $player &&
           $matrix[$row][$col + 1] == $player &&
