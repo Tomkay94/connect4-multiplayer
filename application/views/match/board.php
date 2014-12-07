@@ -13,12 +13,13 @@
     // used after AJAX requests to update board
     function updateBoard(board) {
       var grid = board;
+      console.log("updating board", board);
       for (row = 0; row < 6; row++)
         for (col = 0; col < 7; col++) {
           // TODO: need to figure out the ordering!
-          if (grid[row][col] == 0) {
+          if (grid[5-row][col] == 0) {
             $('#'+(col+1)+'-'+(row+1)).css("background-color", 'transparent');
-          } else if (grid[row][col] == userID) {
+          } else if (grid[5-row][col] == userID) {
             $('#'+(col+1)+'-'+(row+1)).css("background-color", yellow);
           } else {
             $('#'+(col+1)+'-'+(row+1)).css("background-color", red);
@@ -55,8 +56,8 @@
       });
 
       // board update
-      $.getJSON("<?= base_url() ?>board/update", function (data,text,jqXHR){
-        if (data && data.status=='success') {
+      $.getJSON("<?= base_url() ?>board/refreshBoard", function (data,text,jqXHR){
+        if (data) {
           // get back board object matrix
           updateBoard(data.board);
         }
@@ -93,11 +94,14 @@
         }
       });
 
-      // Check if the player won
-      $.getJSON("<?= base_url() ?>board/check_if_winner", function (data,text,jqXHR){
-        if (data && data.status == 1) {
-            alert("Congrats, you won the game!");    
-        }
+      // put move
+      var col_num = e.target.id.split('-')[0];
+      $.post("<?= base_url() ?>board/update", {'col': col_num}, function (data,text,jqXHR){
+        console.log('data', data);
+        if (data)
+          if (data.status == 'failure') {
+              alert(data.message);    
+          }
       });
 
     });

@@ -155,27 +155,95 @@ class Board extends CI_Controller {
 
   /* Takes a coordintate, finds where to put the 
      players piece and returns the updated game board */
-  function update($chip_column) {
+  function update() {
+    $chip_column = $this->input->post('col');
+    if ($chip_column < 1 ||
+        $chip_column > self::NUM_COLUMNS) {
+      $errormsg = "Invalid Column!";
+      goto error;
+    }
+
     $user = $_SESSION['user'];
     $this->load->model('match_model');
-    $matrix = unserialize($this->match_model->getExclusive($user->match_id)->board_state);
-    
+
+    // TRANSACTION
+    $this->db->trans_begin();
+
+    $match = $this->match_model->getExclusive($user->match_id);
+    if ($match->match_status_id != Match::ACTIVE) {
+      $errormsg = "Game already ended.";
+      goto transactionerror;
+    }
+
+    $matrix = unserialize($match->board_state);
+
+    // figure out which row to drop the player piece into
     $row = 0;
-    while($row < NUM_ROWS - 1 && 
+    while($row < self::NUM_ROWS - 1 && 
           $matrix[$row + 1][$chip_column - 1] == 0) {
       $row++;
     }
+
+    if ($row >= self::NUM_ROWS) {
+      $errormsg = "Invalid Move!";
+      goto transactionerror;
+    }
+
     $matrix[$row][$chip_column -1] = $user->id;
-    return $matrix;
+
+    // insert matrix back to db
+    // serialization taken care of in function
+    $this->match_model->updateBoard($match->id, $matrix);
+
+    // check if winning move
+    $win = (
+      $this->check_horizontal() ||
+      $this->check_vertical() ||
+      $this->check_diagonal()
+    );
+
+    if ($win) {
+      if ($match->user1_id == $user->id) {
+        $this->match_model->updateStatus($match->id, Match::U1WON);
+      } else {
+        $this->match_model->updateStatus($match->id, Match::U2WON);
+      }
+    }
+
+    // TODO: check for tie!!
+    // $match->$match_status_id = Match::TIE;
+
+    if ($this->db->trans_status() === FALSE) {
+        $errormsg = "Transaction error, please try again.";
+        goto transactionerror;
+    }
+
+    $this->db->trans_commit();
+
+    echo json_encode(array('board'=>$matrix));
+    return;
+
+    transactionerror:
+      $this->db->trans_rollback();
+
+    error:
+      echo json_encode(array('status'=>'failure', 'message'=>$errormsg));
+  }
+
+  function refreshBoard() {
+    $user = $_SESSION['user'];
+    $this->load->model('match_model');
+    $matrix = unserialize($this->match_model->getExclusive($user->match_id)->board_state);
+    echo json_encode(array('board'=>$matrix));
   }
 
   /* Check if a player has won */
   function check_if_winner() {
+    $has_winner = false;
     echo json_encode(
-      array('status'=> (int)(
-        check_horizontal() || 
-        check_vertical() || 
-        check_diagonal() )
+      array(
+        'winner_found'=> $has_winner,
+        'winner' => false
       )
     );
     return;
@@ -185,10 +253,11 @@ class Board extends CI_Controller {
   function check_horizontal() {
     $this->load->model('match_model');
     $user = $_SESSION['user'];
-    $matrix = unserialize($this->match_model->getExclusive($user->match_id)->board_state);
+    $match = $this->match_model->getExclusive($user->match_id);
+    $matrix = unserialize($match->board_state);
     
-    for ($row = 0; $row < NUM_ROWS; $row++) {
-      for ($col = 0; $col < NUM_COLUMNS; $col++) {     
+    for ($row = 0; $row < self::NUM_ROWS; $row++) {
+      for ($col = 0; $col < self::NUM_COLUMNS - 3; $col++) {     
         if (
           $matrix[$row][$col] == $user->id &&
           $matrix[$row][$col + 1] == $user->id &&
@@ -207,8 +276,8 @@ class Board extends CI_Controller {
     $this->load->model('match_model');
     $matrix = unserialize($this->match_model->getExclusive($user->match_id)->board_state);
     
-    for ($row = 0; $row < NUM_ROWS; $row++) {
-      for ($col = 0; $col < NUM_COLUMNS; $col++) {      
+    for ($row = 0; $row < self::NUM_ROWS - 3; $row++) {
+      for ($col = 0; $col < self::NUM_COLUMNS; $col++) {      
         if (
           $matrix[$row][$col] == $user->id &&
           $matrix[$row + 1][$col] == $user->id &&
@@ -229,8 +298,8 @@ class Board extends CI_Controller {
     $matrix = unserialize($this->match_model->getExclusive($user->match_id)->board_state);
     
     // check for a diagonal from an upper left to a lower right
-    for ($row = 0; $row < NUM_ROWS - 3; $row++) { 
-      for ($col = 0; $col < NUM_COLUMNS - 3; $col++) { 
+    for ($row = 0; $row < self::NUM_ROWS - 3; $row++) { 
+      for ($col = 0; $col < self::NUM_COLUMNS - 3; $col++) { 
         if ( 
           $matrix[$row][$col] == $user->id && 
           $matrix[$row][$col] == $matrix[$row + 1][$col + 1] && 
@@ -241,9 +310,10 @@ class Board extends CI_Controller {
       }
     }
     // check for a diagonal from a lower left to an upper right
-    for ($row = NUM_ROWS - 1; $row >= 3; $row--) { 
-      for ($col = 0; $col < NUM_COLUMNS - 3; $col++) {
-        if ($matrix[$row][$col] == $user->id && 
+    for ($row = self::NUM_ROWS - 1; $row >= 3; $row--) { 
+      for ($col = 0; $col < self::NUM_COLUMNS - 3; $col++) {
+        if (
+          $matrix[$row][$col] == $user->id && 
           $matrix[$row][$col] == $matrix[$row - 1][$col + 1] && 
           $matrix[$row][$col] == $matrix[$row - 2][$col + 2] &&
           $matrix[$row][$col] == $matrix[$row - 3][$col + 3]) {
