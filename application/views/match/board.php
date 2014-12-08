@@ -137,7 +137,8 @@
 
     <br>
     <p>Click on a column to put down a piece in that column.</p>
-    <p>Yellow - You, Red - <?= $otherUser->login ?>.</p>
+    <span id="colour-you">Yellow</span> - You <br /> 
+    <span id="colour-opponent">Red</span> - Your Opponent (<?= $otherUser->login ?>).<br />
     <br>
 
     <div class="col-md-1"></div>
@@ -163,7 +164,7 @@
   </div>
 
   <div class="col-md-4" id="message-dialogue">
-    <h4>Chat with your opponent, <?= $otherUser->login ?></h4>
+    <h4>Chat with your opponent (<?= $otherUser->login ?>)</h4>
     <?php
       echo form_textarea('conversation', null, 'class="form-control"');
       echo form_open('','class="form-inline"');

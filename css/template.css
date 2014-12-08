@@ -26,6 +26,20 @@
   margin-top: 10%;
 }
 
+#colour-you,
+#colour-opponent {
+  font-weight: bold;
+}
+
+#colour-you {
+  color: #f1c40f;
+}
+
+#colour-opponent {
+  color: #e74c3c;
+}
+
+
 /* Main Template Style
 -------------------------------------------------- */
 html {
