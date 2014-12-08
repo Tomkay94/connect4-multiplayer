@@ -3,7 +3,7 @@ Students:
     Thanasi Karachotzitis   g3karach
 
 *** AMI ID ***  
-//TODO
+ami-7af99c12
 
 *** Source Location ***  
 /var/www/connect4
@@ -11,6 +11,18 @@ Students:
 *** Setup Instructions ***  
 // Start apache  
 sudo service apache2 restart
+
+// Goto the browser and use the following URL:
+localhost/arcade
+
+/* 
+	To review the multi-player aspect of this game,
+	you will need to create at least two profiles
+	within a browser in order to maintain different
+	session variables. The details for setting up
+	profiles for this purpose is described on the 
+	assignment page.
+*/
 
 *** Side Notes ***
 
@@ -39,12 +51,14 @@ Controllers
 Arcade Controller:
 This controller acts as the game lobby. From this controller, there are various 
 actions relating to sending, accepting, declining and checking invitations from 
-other users. The way these methods are called is from within the mainPage.php and
+other users. 
+
+ The way these methods are called is from within the mainPage.php and
  availableUsers.php via AJAX requests (in order to prevent refreshing and redirecting).
  When a user accepts an invitation, a new Match object is created and the empty game 
  board is instatiated. Once the game has started, the controller changes the status 
- of both playing users to "PLAYING"so that future invitations for games cannot be 
- accepted.
+ of both playing users to "PLAYING" so that future invitations for games cannot be 
+ accepted. 
 
 Account Controller:
 This controller allows users to register to the game site. Users are considered
@@ -67,15 +81,26 @@ This controller provides two main functionalities:
 	 empty tile is represented as a 0, and an occupied tile is represented by the 
 	 playing user's ID for that tile in the matrix. This allows us to easily keep 
 	 track of where each users pieces are, and allows for other functions to easily 
-	 determine whether a user has one or not. Winning is determined through one of 
-	 the following three scenarios: 1) a horizontal connection of 4 identical 
-	 (same user ID) tiles, which are not 0, 2) a vertical connection of 4 identical 
-	 tiles, which are not 0, and 3) a diagonal connection of 4 identical tiles, which 
-	 are not 0. The matrix representation allows us to easily and efficiently scan the 
+	 determine whether a user has one or not. 
+
+	 Winning is determined through one of the following three scenarios: 1) a horizontal 
+	 connection of 4 identical (same user ID) tiles, which are not 0, 2) a vertical 
+	 connection of 4 identical tiles, which are not 0, and 3) a diagonal connection of 
+	 4 identical tiles, which are not 0. 
+
+	 The matrix representation allows us to easily and efficiently scan the 
 	 matrix for these game-ending scenarios. It should be noted that for efficiency 
 	 sake, the functions that check for winning only do so after a player's turn has 
 	 ended, and before the next player's turn starts. This keeps us from repeatedly 
 	 sending requests to the server to check for game ending scenarios.
+
+	 Determining which player's turn it is also occurs within this controller
+	 in order to keep the integrity of the game safe from malicious players. Turns occur in
+	 transactions in order to ensure that players cannot send multiple requests to place
+	 a piece on the board. Turns are determined based on how many pieces are on the board
+	 at the beginning of a turn. If there is an odd even (or none) pieces, it is the inviting
+	 player's turn. If there is an odd number of pieces placed on the board, then it is the 
+	 invitee's turn to place a piece. 
 
 	*** 2) Chat Functionality ***
 	Chat is implemented via AJAX requests checking for user form submissions 
