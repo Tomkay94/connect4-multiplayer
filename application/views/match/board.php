@@ -98,13 +98,6 @@
       // highlight the clicked location
       $('#'+e.target.id).css("background-color", processing);
 
-      // // Check if its their turn
-      // $.get("<?= base_url() ?>board/get_player_turn", function (data, text, jqXHR) {
-      //   if (data && data == false) {
-      //     alert("It's not your turn!");
-      //   }
-      // }
-
       // put move
       var col_num = e.target.id.split('-')[0];
       $.post("<?= base_url() ?>board/update", {'col': col_num}, function (data,text,jqXHR){
@@ -137,14 +130,14 @@
         if ($status == "playing") {
           echo "playing against ".$otherUser->login;
         } else {
-          echo "Wating on ".$otherUser->login;
+          echo "Waiting on ".$otherUser->login;
         }
       ?>
     </div>
 
     <br>
     <p>Click on a column to put down a piece in that column.</p>
-    <p>Yellow - You, Red - Opponent.</p>
+    <p>Yellow - You, Red - <?= $otherUser->login ?>.</p>
     <br>
 
     <div class="col-md-1"></div>
@@ -169,12 +162,12 @@
     </div>
   </div>
 
-  <div class="col-md-4">
-    <h4>Chat with your opponent</h4>
+  <div class="col-md-4" id="message-dialogue">
+    <h4>Chat with your <?= $otherUser->login ?></h4>
     <?php
       echo form_textarea('conversation', null, 'class="form-control"');
       echo form_open('','class="form-inline"');
-      echo form_input('msg', '', 'class="form-control"');
+      echo form_input('msg', '', 'class="form-control" id="message-box"');
       echo form_submit('Send', 'Send', 'class="btn btn-default"');
       echo form_close();
     ?>

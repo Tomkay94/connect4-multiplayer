@@ -11,12 +11,20 @@
   height: 4em;
   border: 1px solid #2980b9;
   margin: 0.5em;
+  border-radius: 50%;
 }
 
 #board .piece:hover {
   border-color: #2ecc71;
 }
 
+#message-box {
+  width: 83.5%;
+}
+
+#message-dialogue {
+  margin-top: 10%;
+}
 
 /* Main Template Style
 -------------------------------------------------- */
