@@ -205,7 +205,7 @@ class Board extends CI_Controller {
     // check if winning move
     $win = (
       $this->check_horizontal() ||
-      $this->check_vertical() ||
+      $this->check_vertical()   ||
       $this->check_diagonal()
     );
 
@@ -278,8 +278,8 @@ class Board extends CI_Controller {
 
   }
 
-  /* Gets the ID of the current player's turn */
-  function get_player_turn() {
+  /* Return the number of chips on the board */
+  function get_num_chips() {
     $this->load->model('match_model');
     $this->load->model('user_model');
     $user = $this->user_model->getFromId($_SESSION['user']->id);
@@ -298,6 +298,20 @@ class Board extends CI_Controller {
         }
       }
     }
+    return $num_player_chips;
+  }
+
+  /* Gets the ID of the current player's turn */
+  function get_player_turn() {
+    $this->load->model('match_model');
+    $this->load->model('user_model');
+    
+    $user = $this->user_model->getFromId($_SESSION['user']->id);
+    $match = $this->match_model->getExclusive($user->match_id);
+
+    $player1 = $match->user1_id;
+    $player2 = $match->user2_id;
+    $num_player_chips = $this->get_num_chips();
 
     // Return the player's ID, it's that person's turn. 
     $player_turn_id= ($num_player_chips % 2 == 0) ? $player1 : $player2;
