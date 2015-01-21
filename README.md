@@ -1,9 +1,9 @@
 ### Setup Instructions 
-// Start apache  
-sudo service apache2 restart
+- Start apache  
+`sudo service apache2 restart`
 
 // Goto the browser and use the following URL:
-localhost/arcade
+`localhost/arcade`
 
 To review the multi-player aspect of this game, you will need to create at least two profiles
 within a browser in order to maintain different session variables. 
